@@ -1,7 +1,7 @@
 package session
 
 import (
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"

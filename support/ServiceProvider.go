@@ -1,7 +1,7 @@
 package support
 
 import (
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 )
 
 //根服务

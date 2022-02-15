@@ -2,7 +2,8 @@ package facades
 
 import (
 	"fmt"
-	"ginrbac/config/yaml"
+
+	"github.com/owenzhou/ginrbac/config/yaml"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
@@ -16,8 +17,12 @@ type ConfigFacade struct {
 
 func (config *ConfigFacade) GetFacadeAccessor() {
 	viper := config.App.Make("config").(*viper.Viper)
+	if viper == nil {
+		fmt.Println("App make config err: config is nil.")
+		return
+	}
 	if err := viper.ReadInConfig(); err != nil {
-		panic("read config error")
+		panic("Read config error.")
 	}
 
 	viper.WatchConfig()

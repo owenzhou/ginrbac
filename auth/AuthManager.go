@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"ginrbac/bootstrap/contracts"
-	"ginrbac/bootstrap/support/facades"
+	"github.com/owenzhou/ginrbac/contracts"
+	"github.com/owenzhou/ginrbac/support/facades"
 )
 
 type AuthManager struct {

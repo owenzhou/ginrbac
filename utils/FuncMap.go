@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"ginrbac/bootstrap/utils/php"
+	"github.com/owenzhou/ginrbac/utils/php"
 	"html/template"
 )
 

@@ -1,7 +1,7 @@
 package app
 
 import (
-	"ginrbac/bootstrap/support/facades"
+	"github.com/owenzhou/ginrbac/support/facades"
 
 	"github.com/go-playground/validator/v10"
 )

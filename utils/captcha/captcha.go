@@ -2,8 +2,8 @@ package captcha
 
 import (
 	"bytes"
-	"ginrbac/bootstrap/support/facades"
-	"ginrbac/bootstrap/utils/php"
+	"github.com/owenzhou/ginrbac/support/facades"
+	"github.com/owenzhou/ginrbac/utils/php"
 	"image"
 	"image/color"
 	"image/png"

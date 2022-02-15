@@ -1,7 +1,7 @@
 package event
 
 import (
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 	"reflect"
 )
 

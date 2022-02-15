@@ -2,7 +2,7 @@ package auth
 
 import (
 	"encoding/base64"
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 	"math/rand"
 	"strings"
 	"time"

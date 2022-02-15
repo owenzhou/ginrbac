@@ -1,8 +1,8 @@
 package log
 
 import (
-	"ginrbac/bootstrap/support/facades"
-	"ginrbac/bootstrap/utils/php"
+	"github.com/owenzhou/ginrbac/support/facades"
+	"github.com/owenzhou/ginrbac/utils/php"
 	"io/ioutil"
 	"path"
 	"time"
@@ -13,6 +13,9 @@ import (
 )
 
 func newLogger() *logrus.Logger {
+	if facades.Config == nil{
+		return nil
+	}
 	//判断是否存在日志文件夹
 	if ok := php.Is_dir(facades.Config.Logger.OutputDir); !ok {
 		if _, err := php.Mkdir(facades.Config.Logger.OutputDir, 0666, true); err != nil {

@@ -1,7 +1,7 @@
 package facades
 
 import (
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 )
 
 type Facade struct {

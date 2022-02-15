@@ -1,7 +1,7 @@
 package app
 
 import (
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 	"net/http"
 )
 

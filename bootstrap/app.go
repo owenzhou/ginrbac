@@ -1,20 +1,22 @@
 package bootstrap
 
 import (
-	"ginrbac/bootstrap/auth"
-	"ginrbac/bootstrap/casbin"
-	"ginrbac/bootstrap/config"
-	"ginrbac/bootstrap/database"
-	"ginrbac/bootstrap/event"
-	"ginrbac/bootstrap/hash"
-	"ginrbac/bootstrap/log"
-	"ginrbac/bootstrap/redis"
-	"ginrbac/bootstrap/session"
-	"ginrbac/bootstrap/support/facades"
-	"ginrbac/bootstrap/translator"
+	"github.com/owenzhou/ginrbac/auth"
+	"github.com/owenzhou/ginrbac/casbin"
+	"github.com/owenzhou/ginrbac/config"
+	"github.com/owenzhou/ginrbac/viper"
+	"github.com/owenzhou/ginrbac/database"
+	"github.com/owenzhou/ginrbac/event"
+	"github.com/owenzhou/ginrbac/hash"
+	"github.com/owenzhou/ginrbac/log"
+	"github.com/owenzhou/ginrbac/redis"
+	"github.com/owenzhou/ginrbac/session"
+	"github.com/owenzhou/ginrbac/support/facades"
+	"github.com/owenzhou/ginrbac/translator"
 )
 
 type Providers struct {
+	*viper.ViperServiceProvider
 	*config.ConfigServiceProvider
 	*event.EventServiceProvider
 	*log.LogServiceProvider

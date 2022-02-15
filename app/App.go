@@ -2,11 +2,11 @@ package app
 
 import (
 	"encoding/json"
-	bootstrapconfig "ginrbac/bootstrap/bootstrap"
-	"ginrbac/bootstrap/contracts"
-	"ginrbac/bootstrap/render"
-	"ginrbac/bootstrap/support/facades"
-	"ginrbac/bootstrap/utils"
+	bootstrapconfig "github.com/owenzhou/ginrbac/bootstrap"
+	"github.com/owenzhou/ginrbac/contracts"
+	"github.com/owenzhou/ginrbac/render"
+	"github.com/owenzhou/ginrbac/support/facades"
+	"github.com/owenzhou/ginrbac/utils"
 	"html/template"
 	"io/fs"
 	"net/http"
@@ -33,11 +33,13 @@ func NewApp(views ...fs.FS) *App {
 	app.Register(new(bootstrapconfig.Providers))
 	app.Register(new(bootstrapconfig.Facades))
 
-	//设置运行模式
-	if facades.Config.Debug {
-		gin.SetMode(gin.DebugMode)
-	} else {
-		gin.SetMode(gin.ReleaseMode)
+	if facades.Config != nil{
+		//设置运行模式
+		if facades.Config.Debug {
+			gin.SetMode(gin.DebugMode)
+		} else {
+			gin.SetMode(gin.ReleaseMode)
+		}
 	}
 
 	//不使用logger，只使用recovery
@@ -46,8 +48,10 @@ func NewApp(views ...fs.FS) *App {
 
 	app.Engine = engine
 
-	//设置默认全局中间件,必需在 app.IRouter 各方法前面
-	app.Middlewares(new(bootstrapconfig.Middlewares))
+	if facades.Config != nil{
+		//设置默认全局中间件,必需在 app.IRouter 各方法前面
+		app.Middlewares(new(bootstrapconfig.Middlewares))
+	}
 
 	//设置模板及静态文件
 	if len(views) > 0 {

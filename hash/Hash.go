@@ -1,7 +1,7 @@
 package hash
 
 import (
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 
 	"golang.org/x/crypto/bcrypt"
 )

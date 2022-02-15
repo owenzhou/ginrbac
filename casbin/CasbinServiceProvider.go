@@ -1,8 +1,8 @@
 package casbin
 
 import (
-	"ginrbac/bootstrap/contracts"
-	"ginrbac/bootstrap/support"
+	"github.com/owenzhou/ginrbac/contracts"
+	"github.com/owenzhou/ginrbac/support"
 )
 
 type CasbinServiceProvider struct {

@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 	"math/rand"
 	"strings"
 	"time"

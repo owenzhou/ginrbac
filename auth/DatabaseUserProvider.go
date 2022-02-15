@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"ginrbac/bootstrap/contracts"
+	"github.com/owenzhou/ginrbac/contracts"
 
 	"gorm.io/gorm"
 )

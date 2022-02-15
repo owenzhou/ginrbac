@@ -1,6 +1,6 @@
 package facades
 
-import "ginrbac/bootstrap/event"
+import "github.com/owenzhou/ginrbac/event"
 
 var Event *event.Event
 

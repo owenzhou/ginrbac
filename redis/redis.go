@@ -3,12 +3,15 @@ package redis
 import (
 	"context"
 	"fmt"
-	"ginrbac/bootstrap/support/facades"
+	"github.com/owenzhou/ginrbac/support/facades"
 
 	"github.com/go-redis/redis/v8"
 )
 
 func newRedis() *redis.Client {
+	if facades.Config == nil{
+		return nil
+	}
 	redisConf := facades.Config.Redis
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisConf.Addr,

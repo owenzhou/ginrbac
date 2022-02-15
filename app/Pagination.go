@@ -2,7 +2,7 @@ package app
 
 import (
 	"bytes"
-	"ginrbac/bootstrap/utils"
+	"github.com/owenzhou/ginrbac/utils"
 	"html/template"
 	"math"
 	"net/url"

@@ -1,7 +1,7 @@
 package casbin
 
 import (
-	"ginrbac/bootstrap/support/facades"
+	"github.com/owenzhou/ginrbac/support/facades"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
@@ -9,6 +9,10 @@ import (
 )
 
 func newCasbin() *casbin.Enforcer {
+	if facades.Config == nil{
+		return nil
+	}
+
 	//使用代码创建模型，不使用conf文件，免得在打包时需要将文件打包进去
 	m := model.NewModel()
 	m.AddDef("r", "r", "sub, obj, act")

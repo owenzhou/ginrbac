@@ -1,7 +1,7 @@
 package database
 
 import (
-	"ginrbac/bootstrap/support/facades"
+	"github.com/owenzhou/ginrbac/support/facades"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -10,6 +10,10 @@ import (
 )
 
 func newDB() *gorm.DB {
+	if facades.Config == nil{
+		return nil
+	}
+
 	m := facades.Config.Mysql
 	dsn := m.Username + ":" + m.Password + "@tcp(" + m.Host + ":" + m.Port + ")/" + m.Dbname + "?charset=" + m.Charset + "&parseTime=True&loc=Local"
 	mysqlConfig := mysql.Config{
