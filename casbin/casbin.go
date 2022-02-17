@@ -1,6 +1,7 @@
 package casbin
 
 import (
+	"fmt"
 	"github.com/owenzhou/ginrbac/support/facades"
 
 	"github.com/casbin/casbin/v2"
@@ -10,6 +11,11 @@ import (
 
 func newCasbin() *casbin.Enforcer {
 	if facades.Config == nil{
+		return nil
+	}
+
+	if facades.DB == nil{
+		fmt.Println("Casbin error: can not connect to database.")
 		return nil
 	}
 

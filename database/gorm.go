@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"github.com/owenzhou/ginrbac/support/facades"
 
 	"gorm.io/driver/mysql"
@@ -40,7 +41,8 @@ func newDB() *gorm.DB {
 		Logger: loggerer,
 	})
 	if err != nil {
-		panic(err)
+		fmt.Println("Database error: can not connect to database.")
+		return nil
 	}
 	return db
 }
