@@ -13,6 +13,7 @@ import (
 	"github.com/owenzhou/ginrbac/session"
 	"github.com/owenzhou/ginrbac/support/facades"
 	"github.com/owenzhou/ginrbac/translator"
+	"github.com/owenzhou/ginrbac/cron"
 )
 
 type Providers struct {
@@ -26,6 +27,7 @@ type Providers struct {
 	*auth.AuthServiceProvider
 	*casbin.CasbinServiceProvider
 	*translator.TranslatorServiceProvider
+	*cron.CronServiceProvider
 }
 
 type Facades struct {
@@ -38,6 +40,7 @@ type Facades struct {
 	*facades.HashFacade
 	*facades.CasbinFacade
 	*facades.TranslatorFacade
+	*facades.CronFacade
 }
 
 type Middlewares struct {
