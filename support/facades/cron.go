@@ -1,15 +1,15 @@
 package facades
 
 import (
-	"github.com/robfig/cron/v3"
+	"github.com/owenzhou/ginrbac/cron"
 )
 
 var Cron *cron.Cron
 
-type CronFacade struct{
+type CronFacade struct {
 	*Facade
 }
 
-func (c *CronFacade) GetFacadeAccessor(){
+func (c *CronFacade) GetFacadeAccessor() {
 	Cron = c.App.Make("cron").(*cron.Cron)
 }
