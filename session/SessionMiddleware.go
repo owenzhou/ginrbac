@@ -13,5 +13,6 @@ type SessionMiddleware struct {
 
 func (s *SessionMiddleware) Middleware() {
 	store := cookie.NewStore([]byte("cookie_store"))
+	store.Options(sessions.Options{MaxAge: 7200})
 	s.App.GetEngine().Use(sessions.Sessions("session_id", store))
 }
