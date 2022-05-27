@@ -1,18 +1,18 @@
 package app
 
 import (
-	"encoding/json"
-	bootstrapconfig "github.com/owenzhou/ginrbac/bootstrap"
-	"github.com/owenzhou/ginrbac/contracts"
-	"github.com/owenzhou/ginrbac/render"
-	"github.com/owenzhou/ginrbac/support/facades"
-	"github.com/owenzhou/ginrbac/utils"
 	"html/template"
 	"io/fs"
 	"net/http"
 	"reflect"
 	"strings"
 	"sync"
+
+	bootstrapconfig "github.com/owenzhou/ginrbac/bootstrap"
+	"github.com/owenzhou/ginrbac/contracts"
+	"github.com/owenzhou/ginrbac/render"
+	"github.com/owenzhou/ginrbac/support/facades"
+	"github.com/owenzhou/ginrbac/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -376,20 +376,38 @@ func (app *App) loadTemplate(views fs.FS) render.Renderer {
 	return r
 }
 
-//获取routes，无法获取routes就panic
-func (app *App) GetRoutes() []map[string]interface{} {
-	b, err := json.Marshal(Routes)
-	if err != nil {
-		panic(err)
-	}
-	var result []map[string]interface{}
-
-	err = json.Unmarshal(b, &result)
-	if err != nil {
-		panic(err)
-	}
-	return result
+//获取路由树
+func (app *App) GetRoutesTree() interface{} {
+	return routes
 }
+
+//获取路由数组，数组每个元素都是一个路由组
+func (app *App) GetRoutesGroup() (result interface{}) {
+	result = generateGroup(routes)
+	return
+}
+
+//递归生成路由组
+func generateGroup(node *route) (result []*route) {
+	//退出递归
+	if len(node.Children) == 0 {
+		return
+	}
+	//深拷贝node数据
+	routeCopy := *node
+	routeCopy.Children = []*route{}
+	result = append(result, &routeCopy)
+	for _, v := range node.Children {
+		if v.Method != "GROUP"{
+			routeCopy.Children = append(routeCopy.Children, v)
+			continue
+		}
+		result = append(result, generateGroup(v)...)
+	}
+
+	return
+}
+
 
 //开始程序
 func (app *App) Run(addr ...string) {

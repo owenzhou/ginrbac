@@ -27,7 +27,8 @@ type IApplication interface {
 	InjectApp(interface{}) interface{}
 	Name() string
 	RegistEvent(interface{})
-	GetRoutes() []map[string]interface{}
+	GetRoutesTree() interface{}
+	GetRoutesGroup() interface{}
 	GetEngine() *gin.Engine
 	Use(...interface{})
 	NoRoute(...interface{})

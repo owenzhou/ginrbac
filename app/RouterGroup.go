@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//路由树结构
 type route struct {
 	Url      string   `json:"url"`
 	Comment  string   `json:"comment"`
@@ -14,44 +15,70 @@ type route struct {
 	Children []*route `json:"children"`
 }
 
+//搜索树的结点(路由组)是否存在
+func (r *route) searchGroup(groupName string) (exist bool, fr *route) {
+	//退出递归
+	if r.Url == groupName {
+		exist = true
+		fr = r
+		return
+	}
+	if len(r.Children) == 0 {
+		return
+	}
+	
+	for _, v := range r.Children{
+		if v.Method != "GROUP" {
+			continue
+		}
+		exist, fr = v.searchGroup(groupName)
+	}
+
+	return
+}
+
+//搜索路由是否存在
+func (r *route) searchRoute(ro *route) (exist bool, fr *route){
+	ok, group := r.searchGroup(ro.Group)
+	//每个路由必定属于一个组，如果找不到路由组，直接panic
+	if !ok {
+		panic("route group: "+ ro.Group +" is not exist")
+	}
+
+	fr = group
+	for _, v := range group.Children{
+		if v.Url == ro.Url{
+			exist = true
+			return
+		}
+	}
+	return
+}
+
+//路由树添加路由
+func (r *route) add(ro *route){
+	exceptUrl := ro.Group + ro.Url
+	if ro.Group == "/" {
+		exceptUrl = ro.Url
+	}
+	ro.Url= exceptUrl
+	//初始化孩子数组，避免json解析时为null
+	ro.Children = []*route{}
+
+	ok, group := r.searchRoute(ro)
+	if !ok {
+		group.Children = append(group.Children, ro)
+	}
+}
+
 //添加String方法，方便打印出数据
 func (r *route) String() string {
 	return fmt.Sprintf("{Url:%s, Comment:%s, Method:%s, Group:%s, Children: %v}", r.Url, r.Comment, r.Method, r.Group, r.Children)
 }
 
 //初始化设置根路由
-var Routes = []*route{
-	{Url: "/", Comment: "根路由", Method: "GROUP", Group: "/"},
-}
-
-//往 Routes 里添加路由
-func addRoute(routes []*route, route *route) {
-
-	groupExists := false
-	//查找中由组是否存在
-	for _, v := range Routes {
-		if v.Group == route.Group+route.Url {
-			groupExists = true
-			break
-		}
-
-		if route.Method != "GROUP" && route.Group == v.Group {
-			if route.Group != "/" {
-				route.Url = route.Group + route.Url
-			}
-			v.Children = append(v.Children, route)
-			break
-		}
-	}
-	if !groupExists && route.Method == "GROUP" {
-		if route.Group == "/" {
-			route.Group = route.Url
-		} else {
-			route.Group = route.Group + route.Url
-			route.Url = route.Group
-		}
-		Routes = append(Routes, route)
-	}
+var routes = &route{
+	Url: "/", Comment: "根路由", Method: "GROUP",
 }
 
 //-------------重写 gin 路由方法---------------
@@ -100,7 +127,7 @@ func (r *RouterGroup) Resource(relativePath string, ctrl IController, comment st
 
 func (r *RouterGroup) Group(relativePath string, args ...interface{}) *RouterGroup {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "GROUP", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "GROUP", Group: r.GRouter.BasePath()})
 	group := &RouterGroup{
 		App:     r.App,
 		GRouter: r.GRouter.Group(relativePath, handlers...),
@@ -118,63 +145,63 @@ func (r *RouterGroup) Use(args ...interface{}) IRoutes {
 
 func (r *RouterGroup) Handle(httpMethod, relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "HANDLE", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "HANDLE", Group: r.GRouter.BasePath()})
 	r.GRouter.Handle(httpMethod, relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Any(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "ANY", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "ANY", Group: r.GRouter.BasePath()})
 	r.GRouter.Any(relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Get(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "GET", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "GET", Group: r.GRouter.BasePath()})
 	r.GRouter.GET(relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Post(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "POST", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "POST", Group: r.GRouter.BasePath()})
 	r.GRouter.POST(relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Delete(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "DELETE", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "DELETE", Group: r.GRouter.BasePath()})
 	r.GRouter.DELETE(relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Patch(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "PATCH", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "PATCH", Group: r.GRouter.BasePath()})
 	r.GRouter.PATCH(relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Put(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "PUT", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "PUT", Group: r.GRouter.BasePath()})
 	r.GRouter.PUT(relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Options(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "OPTIONS", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "OPTIONS", Group: r.GRouter.BasePath()})
 	r.GRouter.OPTIONS(relativePath, handlers...)
 	return r.returnObj()
 }
 
 func (r *RouterGroup) Head(relativePath string, args ...interface{}) IRoutes {
 	handlers, comment := r.App.getComment(args...)
-	addRoute(Routes, &route{Url: relativePath, Comment: comment, Method: "HEAD", Group: r.GRouter.BasePath()})
+	routes.add(&route{Url: relativePath, Comment: comment, Method: "HEAD", Group: r.GRouter.BasePath()})
 	r.GRouter.HEAD(relativePath, handlers...)
 	return r.returnObj()
 }
