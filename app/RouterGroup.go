@@ -47,7 +47,7 @@ func (r *route) searchRoute(ro *route) (exist bool, fr *route){
 
 	fr = group
 	for _, v := range group.Children{
-		if v.Url == ro.Url{
+		if v.Url == ro.Url && v.Method == ro.Method {
 			exist = true
 			return
 		}
