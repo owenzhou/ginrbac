@@ -17,7 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type HandlerFunc func(*Context)
+type HandlerFunc = func(*Context)
 
 type Action map[IController]string
 
@@ -98,9 +98,7 @@ func (a *App) bindContext(handler interface{}) gin.HandlerFunc {
 		ctx.Context = c
 		ctx.share = nil
 
-		if handle, ok := handler.(func(*Context)); ok {
-			handle(ctx)
-		} else if handle, ok := handler.(HandlerFunc); ok {
+		if handle, ok := handler.(HandlerFunc); ok {
 			handle(ctx)
 		} else if handle, ok := handler.(Action); ok {
 			for iCtrl, actionStr := range handle {
@@ -142,10 +140,6 @@ func (a *App) getComment(args ...interface{}) ([]gin.HandlerFunc, string) {
 
 	for _, v := range args {
 		if handler, ok := v.(HandlerFunc); ok {
-			handlers = append(handlers, a.bindContext(handler))
-			continue
-		}
-		if handler, ok := v.(func(*Context)); ok {
 			handlers = append(handlers, a.bindContext(handler))
 			continue
 		}
