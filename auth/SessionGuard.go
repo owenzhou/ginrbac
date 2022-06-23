@@ -59,6 +59,8 @@ func (a *SessionGuard) User() contracts.IUser {
 				a.updateSession(user.GetAuthIdentifier())
 				//将用户信息写进gin.Context
 				a.SetUser(user)
+			} else {
+				user = &GenericUser{}
 			}
 		} else { //客户端不存在cookie，则返回空
 			user = &GenericUser{}
@@ -177,7 +179,7 @@ func (a *SessionGuard) setRemember(user contracts.IUser) {
 
 func (a *SessionGuard) setCookie(name, value string, expires int) {
 	path := "/"
-	domain := a.context.Request.Host
+	domain := ""
 	secure := false   //设置这个 Cookie 是否仅仅通过安全的 HTTPS 连接传给客户端
 	httponly := false //设置成 true，Cookie 仅可通过 HTTP 协议访问。 这意思就是 Cookie 无法通过类似 JavaScript 这样的脚本语言访问。 要有效减少 XSS 攻击时的身份窃取行为，可建议用此设置
 

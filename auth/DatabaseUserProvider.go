@@ -22,7 +22,7 @@ func (d *DatabaseUserProvider) RetrieveByToken(identifier, token string) contrac
 	data := make(map[string]interface{})
 	d.db.Table(d.table).Where("id", identifier).Find(&data)
 	user := &GenericUser{Attributes: data}
-	if !user.IsEmpty() && user.GetRememberToken() != "" && d.hasher.Check(user.GetRememberToken(), token) {
+	if !user.IsEmpty() && user.GetRememberToken() != "" && user.GetRememberToken() == token {
 		return user
 	} else {
 		return nil
