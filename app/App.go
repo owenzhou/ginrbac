@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	"sync"
+	"time"
 
 	bootstrapconfig "github.com/owenzhou/ginrbac/bootstrap"
 	"github.com/owenzhou/ginrbac/contracts"
@@ -40,6 +41,11 @@ func NewApp(views ...fs.FS) *App {
 		} else {
 			gin.SetMode(gin.ReleaseMode)
 		}
+		location, err := time.LoadLocation(facades.Config.Timezone)
+		if err != nil {
+			panic(err)
+		}
+		time.Local = location
 	}
 
 	//不使用logger，只使用recovery
