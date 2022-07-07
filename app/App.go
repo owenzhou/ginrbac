@@ -330,7 +330,7 @@ func (app *App) SetFuncMap(funcMap template.FuncMap) {
 		}
 		app.FuncMap[key] = value
 	}
-
+	app.FuncMap["widget"] = utils.Widget
 }
 
 //加载模板

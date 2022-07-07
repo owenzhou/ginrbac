@@ -1,13 +1,18 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"html/template"
 	"net/url"
+	"path/filepath"
 	"reflect"
 	"sort"
 	"strconv"
+
+	"github.com/owenzhou/ginrbac/support/facades"
 )
 
 //int int8 int16 int32 int64 uint uint8 uint16 uint32 uint64 float32 float64转字符串
@@ -106,4 +111,33 @@ func Struct2Map(v interface{}) map[string]interface{} {
 
 func ParseHtml(str string) template.HTML {
 	return template.HTML(str)
+}
+
+func Widget(name string, data ...interface{}) template.HTML {
+	widget, err := fs.Glob(facades.Views, "views/" + name + "*")
+	if err != nil {
+		panic(err)
+	}
+	
+	tname := filepath.Base(widget[0])
+	funcMap := template.FuncMap{}
+	for n, f := range FuncMap{
+		funcMap[n] = f
+	}
+	funcMap["widget"] = Widget
+
+	var tmpl *template.Template
+	if facades.Config.Debug{
+		tmpl = template.Must(template.New(tname).Funcs(funcMap).ParseFiles(widget...))
+	}else{
+		tmpl = template.Must(template.New(tname).Funcs(funcMap).ParseFS(facades.Views, widget...))
+	}
+
+	b := bytes.NewBuffer([]byte{})
+	err1 := tmpl.ExecuteTemplate(b, tname, data)
+	if err1 != nil {
+		panic(err1)
+	}
+	
+	return template.HTML(b.String())
 }

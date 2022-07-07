@@ -125,13 +125,13 @@ func (p *pagination) Links() template.HTML {
 	</ul>
 	{{ end }}`
 
-	tmpl, _ = template.New("page").Parse(ul)
+	tmpl = template.Must(template.New("page").Parse(ul))
 	args := map[string]interface{}{
 		"page":  p,
 		"links": links,
 	}
 	b := bytes.NewBuffer([]byte{})
-	tmpl.Execute(b, args)
+	tmpl.ExecuteTemplate(b, "page", args)
 	return template.HTML(b.String())
 }
 

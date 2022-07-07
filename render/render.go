@@ -18,7 +18,7 @@ var (
 
 func New() Renderer {
 	if gin.IsDebugging() {
-		return make(RenderDebug)
+		return NewDebug()
 	}
 	return make(Render)
 }
