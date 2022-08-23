@@ -46,7 +46,7 @@ type pagination struct {
 
 //从当前url匹配分页
 func (p *pagination) FindCurrentPage() int {
-	reg := regexp.MustCompile(`([/]{1}` + p.PageLabel + `/)([^/]*)`)
+	reg := regexp.MustCompile(`([/]{1}` + p.PageLabel + `/)([^/.]*)`)
 	if reg.MatchString(p.CurrentURI) {
 		p := reg.FindStringSubmatch(p.CurrentURI)
 		return utils.Str2Int(p[2])
@@ -63,7 +63,7 @@ func (p *pagination) GenerateURL(key string, val interface{}) string {
 
 	var reg *regexp.Regexp
 	if p.PertyUrl {
-		reg = regexp.MustCompile(`([/]{1}` + key + `/)([^/]*)`)
+		reg = regexp.MustCompile(`([/]{1}` + key + `/)([^/.]*)`)
 	} else {
 		reg = regexp.MustCompile(`([\?&]{1}` + key + `=)([^&]*)`)
 	}
@@ -73,6 +73,10 @@ func (p *pagination) GenerateURL(key string, val interface{}) string {
 			return p.CurrentURI + "?" + key + "=" + utils.Int2Str(val)
 		}
 		if p.PertyUrl {
+			if count := strings.Count(p.CurrentURI, "."); count == 1 {
+				urlArr := strings.Split(p.CurrentURI, ".")
+				return urlArr[0] + "/" + key + "/" + utils.Int2Str(val) + "." + urlArr[1]
+			}
 			return p.CurrentURI + "/" + key + "/" + utils.Int2Str(val)
 		}
 

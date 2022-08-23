@@ -635,3 +635,14 @@ func Array_diff(arr1 interface{}, arrs ...interface{}) (interface{}, error) {
 }
 
 /*****************数组相关函数 结束******************/
+
+/*********************其它函数*************************/
+
+//去除html标签
+func Strip_tags(str string) string {
+	reg := regexp.MustCompile(`<[\s\S]+?>`)
+	if reg.MatchString(str){
+		str = reg.ReplaceAllString(str, "")
+	}
+	return str
+}

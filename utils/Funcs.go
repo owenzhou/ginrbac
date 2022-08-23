@@ -9,8 +9,10 @@ import (
 	"net/url"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/owenzhou/ginrbac/support/facades"
 )
@@ -77,6 +79,46 @@ func URL(route string, params ...interface{}) string {
 	return route + "?" + p
 }
 
+//当前url添加参数
+func UrlAppend(currentUrl, k string, v interface{}) string {
+	var reg *regexp.Regexp
+	if strings.Contains(currentUrl, "?") {
+		reg = regexp.MustCompile(`([\?&]{1}` + k + `=)([^&]*)`)
+	} else {
+		reg = regexp.MustCompile(`([/]{1}` + k + `/)([^/.]*)`)
+	}
+	urlArr := strings.Split(currentUrl, ".")
+	var suffix = ""
+	if len(urlArr) > 1{
+		suffix = "." + urlArr[1]
+	}
+	if !reg.MatchString(currentUrl) {
+		if strings.Contains(currentUrl, "?"){
+			query, _ := url.ParseQuery(currentUrl)
+			query.Add(k, Int2Str(v))
+			u, _ := url.PathUnescape(query.Encode())
+			return u
+		}
+		return urlArr[0] + "/" + k + "/" + Int2Str(v) + suffix
+	}
+	return reg.ReplaceAllString(currentUrl, "${1}" + Int2Str(v))
+}
+
+//当前url删除参数
+func UrlDelete(currentUrl, k string) string{
+	var reg *regexp.Regexp
+	if strings.Contains(currentUrl, "?") {
+		reg = regexp.MustCompile(`([\?&]{1}` + k + `=)([^&]*)`)
+	} else {
+		reg = regexp.MustCompile(`([/]{1}` + k + `/)([^/.]*)`)
+	}
+
+	if reg.MatchString(currentUrl) {
+		return reg.ReplaceAllString(currentUrl, "")
+	}
+	return currentUrl
+}
+
 //生成int数组
 func RangeInt(start, end int) []int {
 	var startTmp = start
@@ -113,6 +155,11 @@ func ParseHtml(str string) template.HTML {
 	return template.HTML(str)
 }
 
+func ParseJS(str string) template.JS{
+	return template.JS(str)
+}
+
+//可填参数data,只取第一个
 func Widget(name string, data ...interface{}) template.HTML {
 	widget, err := fs.Glob(facades.Views, "views/" + name + "*")
 	if err != nil {
@@ -133,11 +180,59 @@ func Widget(name string, data ...interface{}) template.HTML {
 		tmpl = template.Must(template.New(tname).Funcs(funcMap).ParseFS(facades.Views, widget...))
 	}
 
+	var d interface{}
+	if len(data) > 0 {
+		d = data[0]
+	}
+
 	b := bytes.NewBuffer([]byte{})
-	err1 := tmpl.ExecuteTemplate(b, tname, data)
+	err1 := tmpl.ExecuteTemplate(b, tname, d)
 	if err1 != nil {
 		panic(err1)
 	}
 	
 	return template.HTML(b.String())
+}
+
+//判断指针是否相等
+func DeepEqual(val, val2 interface{}) bool {
+	v := reflect.Indirect(reflect.ValueOf(val))
+	v2 := reflect.Indirect(reflect.ValueOf(val2))
+	var newV, newV2 interface{}
+	
+	switch(v.Kind()){
+		//Int、Int8、Int16、Int32、Int64
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			newV = v.Int()
+		//Uint、Uintptr、Uint8、Uint16、Uint32、Uint64
+		case reflect.Uint, reflect.Uintptr, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			newV = int64(v.Uint())
+		case reflect.Float32, reflect.Float64:
+			newV = v.Float()
+		case reflect.String:
+			newV = v.String()
+	}
+
+	switch(v2.Kind()){
+		//Int、Int8、Int16、Int32、Int64
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			newV2 = v2.Int()
+		//Uint、Uintptr、Uint8、Uint16、Uint32、Uint64
+		case reflect.Uint, reflect.Uintptr, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			newV2 = int64(v2.Uint())
+		case reflect.Float32, reflect.Float64:
+			newV2 = v2.Float()
+		case reflect.String:
+			newV2 = v2.String()
+	}
+	
+	return newV == newV2
+}
+
+func DeepNotEqual(val, val2 interface{}) bool {
+	return !DeepEqual(val, val2)
+}
+
+func PlusInt(v, i int) int {
+	return v + i
 }

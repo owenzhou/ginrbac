@@ -1,10 +1,11 @@
 package app
 
 import (
+	"strings"
+
 	"github.com/owenzhou/ginrbac/contracts"
 	"github.com/owenzhou/ginrbac/support/facades"
 	"github.com/owenzhou/ginrbac/utils"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,6 +30,16 @@ func (c *Context) ParseParams(key string) map[string]string {
 	}
 	return paramsMap
 }
+
+//重写param函数，获取带.html, .htm, .xhtml等后缀的参数
+func (c *Context) Param(key string) string {
+	param := c.Context.Param(key)
+	if i := strings.LastIndex(param, "."); i > 0 {
+		param = param[0:i]
+	}
+	return param
+}
+
 
 //共享视图数据
 func (c *Context) Share(key string, data interface{}) {
