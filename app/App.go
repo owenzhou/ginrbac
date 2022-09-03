@@ -318,6 +318,12 @@ func (app *App) SetHTMLTemplate(views fs.FS) {
 		return
 	}
 	fs, _ := fs.Sub(views, "views/layouts/assets")
+	app.Engine.Use(func(c *gin.Context){
+		if strings.HasPrefix(c.Request.RequestURI, "/assets/") {
+			c.Header("Cache-Control", "max-age=5184000")
+		}
+		c.Next()
+	})
 	app.Engine.StaticFS("/assets", http.FS(fs))
 }
 
