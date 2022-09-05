@@ -80,7 +80,7 @@ func URL(route string, params ...interface{}) string {
 }
 
 //当前url添加参数
-func UrlAppend(currentUrl, k string, v interface{}) string {
+func UrlAppend(k string, v interface{}, currentUrl string) string {
 	var reg *regexp.Regexp
 	if strings.Contains(currentUrl, "?") {
 		reg = regexp.MustCompile(`([\?&]{1}` + k + `=)([^&]*)`)
@@ -105,7 +105,7 @@ func UrlAppend(currentUrl, k string, v interface{}) string {
 }
 
 //当前url删除参数
-func UrlDelete(currentUrl, k string) string{
+func UrlDelete(k, currentUrl string) string{
 	var reg *regexp.Regexp
 	if strings.Contains(currentUrl, "?") {
 		reg = regexp.MustCompile(`([\?&]{1}` + k + `=)([^&]*)`)
