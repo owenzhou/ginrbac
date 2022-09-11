@@ -44,4 +44,5 @@ var FuncMap = template.FuncMap{
 	"md5": php.Md5,
 	"strip_tags": php.Strip_tags,
 	"plus_int": PlusInt,
+	"ptr_value": PtrValue,
 }

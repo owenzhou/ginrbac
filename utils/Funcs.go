@@ -236,3 +236,12 @@ func DeepNotEqual(val, val2 interface{}) bool {
 func PlusInt(v, i int) int {
 	return v + i
 }
+
+//获取指针地址保存的值
+func PtrValue(v interface{}) interface{} {
+	val := reflect.ValueOf(v)
+	if val.Kind() != reflect.Ptr {
+		return v
+	}
+	return reflect.Indirect(val).Interface()
+}
