@@ -34,7 +34,7 @@ func (c *Context) ParseParams(key string) map[string]string {
 //重写param函数，获取带.html, .htm, .xhtml等后缀的参数
 func (c *Context) Param(key string) string {
 	param := c.Context.Param(key)
-	if i := strings.LastIndex(param, "."); i > 0 {
+	if i := strings.LastIndex(param, ".htm"); i > 0 {
 		param = param[0:i]
 	}
 	return param
