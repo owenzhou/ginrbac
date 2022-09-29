@@ -94,3 +94,12 @@ func (c *Context) NewPagination(total int64) *pagination {
 
 	return page
 }
+
+//判断是否是ajax请求
+func (c *Context) IsAjax() (isAjax bool) {
+	XRequestedWith := c.Request.Header.Get("X-Requested-With")
+	if strings.HasPrefix(XRequestedWith, "XMLHttpRequest") {
+		isAjax = true
+	}
+	return isAjax
+}
