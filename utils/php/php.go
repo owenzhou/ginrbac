@@ -9,13 +9,17 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math/rand"
+	"net/http"
 	"os"
 	"reflect"
 	"regexp"
 	"strings"
 	"time"
 	"unicode"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 /*****************加密相关函数 开始******************/
@@ -30,6 +34,16 @@ func Md5(str string) string {
 func Sha1(str string) string {
 	data := sha1.Sum([]byte(str))
 	return fmt.Sprintf("%x", data)
+}
+
+func Password_hash(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+func Password_verify(password string, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 /*****************加密相关函数 结束******************/
@@ -129,6 +143,80 @@ func Copy(src, dst string) (int64, error) {
 	}
 	return io.Copy(fd, fs)
 
+}
+
+//删除目录
+func Rmdir(path string) error {
+	return os.RemoveAll(path)
+}
+
+//读取文件
+func ReadFile(name string) (string, error) {
+	content, err := ioutil.ReadFile(name)
+	if err != nil {
+		return "", err
+	}
+	return string(content), err
+}
+
+//写文件
+func WriteFile(path string, content string) error {
+	return ioutil.WriteFile(path, []byte(content), 0644)
+}
+
+//追加写入
+func WriteAppendFile(fileName string, content string) error {
+	f, err := os.OpenFile(fileName, os.O_WRONLY, 0644)
+
+	defer f.Close()
+
+	if err != nil {
+		return err
+	}
+	n, _ := f.Seek(0, 2)
+	_, err = f.WriteAt([]byte(content), n)
+	return err
+}
+
+//file_get_contents
+func File_get_contents(fileName string) (string, error) {
+	//使用正则判断是网络还是本地
+	matched, err := regexp.MatchString(`^http.*`, fileName)
+	if err != nil {
+		return "", err
+	}
+
+	//如果是网络
+	if matched {
+		res, err := http.Get(fileName)
+		if err != nil {
+			return "", err
+		}
+		defer res.Body.Close()
+		content, err := ioutil.ReadAll(res.Body)
+		return string(content), err
+	}
+
+	return ReadFile(fileName)
+}
+
+//file_put_contents
+func File_put_contents(fileName string, content string) error {
+	return WriteFile(fileName, content)
+}
+
+//判断文件或目录是否存在
+func File_exists(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+//更改权限
+func Chmod(path string, mode os.FileMode) error {
+	return os.Chmod(path, mode)
 }
 
 /*****************文件相关函数 结束******************/
