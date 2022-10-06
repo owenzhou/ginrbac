@@ -243,5 +243,8 @@ func PtrValue(v interface{}) interface{} {
 	if val.Kind() != reflect.Ptr {
 		return v
 	}
+	if val.IsZero() {
+		return nil
+	}
 	return reflect.Indirect(val).Interface()
 }
