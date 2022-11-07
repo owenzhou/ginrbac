@@ -2,6 +2,8 @@ package database
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/owenzhou/ginrbac/support/facades"
 
 	"gorm.io/driver/mysql"
@@ -44,5 +46,9 @@ func newDB() *gorm.DB {
 		fmt.Println("Database error: can not connect to database.")
 		return nil
 	}
+	sqlDB, _ := db.DB()
+	sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+	sqlDB.SetMaxIdleConns(m.MaxIdleConns)
+	sqlDB.SetConnMaxLifetime(time.Duration(m.ConnMaxLifeTime)*time.Minute)
 	return db
 }
