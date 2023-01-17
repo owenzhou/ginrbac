@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"os"
@@ -28,6 +27,20 @@ import (
 func Md5(str string) string {
 	data := md5.Sum([]byte(str))
 	return fmt.Sprintf("%x", data)
+}
+
+//md5文件加密
+func Md5_file(filename string, raw ...bool) (string, error) {
+	b, err := os.Open(filename)
+	defer b.Close()
+	if err != nil {
+		return "", err
+	}
+	m := md5.New()
+	if _, err := io.Copy(m, b); err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", m.Sum(nil)), nil
 }
 
 //sha1加密
@@ -152,7 +165,7 @@ func Rmdir(path string) error {
 
 //读取文件
 func ReadFile(name string) (string, error) {
-	content, err := ioutil.ReadFile(name)
+	content, err := os.ReadFile(name)
 	if err != nil {
 		return "", err
 	}
@@ -161,7 +174,7 @@ func ReadFile(name string) (string, error) {
 
 //写文件
 func WriteFile(path string, content string) error {
-	return ioutil.WriteFile(path, []byte(content), 0644)
+	return os.WriteFile(path, []byte(content), 0644)
 }
 
 //追加写入
@@ -193,7 +206,7 @@ func File_get_contents(fileName string) (string, error) {
 			return "", err
 		}
 		defer res.Body.Close()
-		content, err := ioutil.ReadAll(res.Body)
+		content, err := io.ReadAll(res.Body)
 		return string(content), err
 	}
 
