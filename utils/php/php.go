@@ -40,6 +40,9 @@ func Md5_file(filename string, raw ...bool) (string, error) {
 	if _, err := io.Copy(m, b); err != nil {
 		return "", err
 	}
+	if len(raw) > 0 && raw[0] == true {
+		return fmt.Sprintf("%b", m.Sum(nil)), nil
+	}
 	return fmt.Sprintf("%x", m.Sum(nil)), nil
 }
 
