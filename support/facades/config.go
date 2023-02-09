@@ -1,7 +1,7 @@
 package facades
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/owenzhou/ginrbac/config/yaml"
 
@@ -18,7 +18,7 @@ type ConfigFacade struct {
 func (config *ConfigFacade) GetFacadeAccessor() {
 	viper := config.App.Make("config").(*viper.Viper)
 	if viper == nil {
-		fmt.Println("App make config err: config is nil.")
+		log.Println("App make config err: config is nil.")
 		return
 	}
 	if err := viper.ReadInConfig(); err != nil {
@@ -28,7 +28,7 @@ func (config *ConfigFacade) GetFacadeAccessor() {
 	viper.WatchConfig()
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Println("Config file changed:", e.Name)
+		log.Println("Config file changed:", e.Name)
 		if err := viper.Unmarshal(&Config); err != nil {
 			panic(err)
 		}

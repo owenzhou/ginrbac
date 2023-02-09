@@ -1,7 +1,7 @@
 package database
 
 import (
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/owenzhou/ginrbac/support/facades"
@@ -43,7 +43,7 @@ func newDB() *gorm.DB {
 		Logger: loggerer,
 	})
 	if err != nil {
-		fmt.Println("Database error: can not connect to database.")
+		log.Println("Database error: can not connect to database.")
 		return nil
 	}
 	sqlDB, _ := db.DB()

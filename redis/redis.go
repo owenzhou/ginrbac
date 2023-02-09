@@ -2,10 +2,11 @@ package redis
 
 import (
 	"context"
-	"fmt"
+	"log"
+
 	"github.com/owenzhou/ginrbac/support/facades"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 func newRedis() *redis.Client {
@@ -15,12 +16,12 @@ func newRedis() *redis.Client {
 	redisConf := facades.Config.Redis
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisConf.Addr,
-		Password: redisConf.Password, // no password set
-		DB:       redisConf.DB,       // use default DB
+		Password: redisConf.Password, // password set
+		DB:       redisConf.DB,       // use DB
 	})
 	_, err := client.Ping(context.Background()).Result()
 	if err != nil {
-		fmt.Println("Redis error:", err)
+		log.Println("Redis error:", err)
 		return nil
 	}
 	return client

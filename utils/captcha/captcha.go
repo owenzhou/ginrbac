@@ -2,14 +2,15 @@ package captcha
 
 import (
 	"bytes"
-	"github.com/owenzhou/ginrbac/support/facades"
-	"github.com/owenzhou/ginrbac/utils/php"
 	"image"
 	"image/color"
 	"image/png"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/owenzhou/ginrbac/support/facades"
+	"github.com/owenzhou/ginrbac/utils/php"
 
 	"github.com/golang/freetype"
 )
@@ -59,7 +60,7 @@ func NewCaptcha() map[string]string {
 		}
 		//读取字体文件内容
 		fontBytes, err := fs.ReadFile(fontFS, "Duality.ttf")
-		fmt.Println(len(fontBytes), len(fontBase64))
+		log.Println(len(fontBytes), len(fontBase64))
 		if err != nil {
 			return result
 		}
