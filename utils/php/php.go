@@ -351,14 +351,58 @@ func Ucfirst(str string) string {
 }
 
 //截取字符串
-func Substr(str string, start int, length int) string {
-	return str[start:(start + length)]
+func Substr(str string, start int, length ...int) string {
+	strLen := len(str)
+	//start
+	//正数 - 在字符串的指定位置开始
+	//负数 - 在从字符串结尾的指定位置开始
+	if start < 0 {
+		start = strLen + start
+	}
+	//length
+	//可选。规定要返回的字符串长度。默认是直到字符串的结尾。
+	//正数 - 从 start 参数所在的位置返回
+	//负数 - 从字符串末端返回
+	if len(length) > 0 {
+		length0 := length[0]
+		end := start + length0
+		if length0 < 0 {
+			end = strLen + length0
+		}
+		if end > strLen {
+			return str[start:]
+		}
+		return str[start:end]
+	}
+	return str[start:]
 }
 
 //截取中文字符串
-func Mb_substr(str string, start int, length int) string {
+func Mb_substr(str string, start int, length ...int) string {
 	ru := []rune(str)
-	return string(ru[start:(start + length)])
+	strLen := len(ru)
+	//start
+	//正数 - 在字符串的指定位置开始
+	//负数 - 在从字符串结尾的指定位置开始
+	if start < 0 {
+		start = strLen + start
+	}
+	//length
+	//可选。规定要返回的字符串长度。默认是直到字符串的结尾。
+	//正数 - 从 start 参数所在的位置返回
+	//负数 - 从字符串末端返回
+	if len(length) > 0 {
+		length0 := length[0]
+		end := start + length0
+		if length0 < 0 {
+			end = strLen + length0
+		}
+		if end > strLen {
+			return string(ru[start:])
+		}
+		return string(ru[start:end])
+	}
+	return string(ru[start:])
 }
 
 //查找子字符串在字符串中第一次出现的位置
