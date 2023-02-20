@@ -4,10 +4,12 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
-	"github.com/owenzhou/ginrbac/contracts"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/owenzhou/ginrbac/contracts"
+	"github.com/owenzhou/ginrbac/support/facades"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -117,7 +119,7 @@ func (a *SessionGuard) Logout() {
 	if a.getRemember() != "" {
 		name := a.getRecallerName()
 		value := ""
-		expires := -7200
+		expires := -88888888
 		a.setCookie(name, value, expires)
 	}
 
@@ -174,6 +176,9 @@ func (a *SessionGuard) setRemember(user contracts.IUser) {
 	name := a.getRecallerName()
 	value := user.GetAuthIdentifier() + "|" + user.GetRememberToken() + "|" + user.GetAuthPassword()
 	expires := 7200
+	if lt := facades.Config.Session.LifeTime; lt != 0 {
+		expires = lt
+	}
 	a.setCookie(name, value, expires)
 }
 

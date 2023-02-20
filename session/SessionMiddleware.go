@@ -14,10 +14,14 @@ type SessionMiddleware struct {
 
 func (s *SessionMiddleware) Middleware() {
 	secret := "cookie_store"
-	if sessionSecret := facades.Config.SessionSecret; sessionSecret != "" {
+	lifetime := 7200
+	if sessionSecret := facades.Config.Session.SecretKey; sessionSecret != "" {
 		secret = sessionSecret
 	}
+	if lt := facades.Config.Session.LifeTime; lt != 0 {
+		lifetime = lt
+	}
 	store := cookie.NewStore([]byte(secret))
-	store.Options(sessions.Options{MaxAge: 7200})
+	store.Options(sessions.Options{MaxAge: lifetime})
 	s.App.GetEngine().Use(sessions.Sessions("session_id", store))
 }

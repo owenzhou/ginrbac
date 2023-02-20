@@ -2,10 +2,11 @@ package auth
 
 import (
 	"fmt"
-	"github.com/owenzhou/ginrbac/contracts"
-	"github.com/owenzhou/ginrbac/support/facades"
 	"strings"
 	"time"
+
+	"github.com/owenzhou/ginrbac/contracts"
+	"github.com/owenzhou/ginrbac/support/facades"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -146,7 +147,7 @@ func (j *JWTGuard) createToken(iUser contracts.IUser) (string, error) {
 	claims := CustomCliams{
 		user,
 		&jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(facades.Config.JWT.ExpiresTime) * time.Second).Unix(),
+			ExpiresAt: time.Now().Add(time.Duration(facades.Config.JWT.LifeTime) * time.Second).Unix(),
 		},
 	}
 

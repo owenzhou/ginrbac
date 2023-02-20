@@ -107,7 +107,7 @@ func Validate(captcha, code string) bool {
 	validateCode := s[0]
 	generateTime := s[1]
 
-	expired := facades.Config.Captcha.Expired
+	expired := facades.Config.Captcha.LifeTime
 	generateTimestamp := php.Strtotime(generateTime)
 	now := php.Time()
 	if now-generateTimestamp > expired {
