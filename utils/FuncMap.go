@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"github.com/owenzhou/ginrbac/utils/php"
 	"html/template"
+
+	"github.com/owenzhou/ginrbac/utils/php"
 )
 
 //传给模板的函数
@@ -43,6 +44,10 @@ var FuncMap = template.FuncMap{
 	"int2str": Int2Str,
 	"md5": php.Md5,
 	"strip_tags": php.Strip_tags,
-	"plus_int": PlusInt,
 	"ptr_value": PtrValue,
+	"plus_int": Plus[int],
+	"minus_int": Minus[int],
+	"multiply_int": Multiply[int],
+	"divide_int": Divide[int],
+	"remainder_int": Remainder[int],
 }

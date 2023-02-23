@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"html/template"
+	"io/fs"
 	"net/url"
 	"path/filepath"
 	"reflect"
@@ -233,10 +233,6 @@ func DeepNotEqual(val, val2 interface{}) bool {
 	return !DeepEqual(val, val2)
 }
 
-func PlusInt(v, i int) int {
-	return v + i
-}
-
 //获取指针地址保存的值
 func PtrValue(v interface{}) interface{} {
 	val := reflect.ValueOf(v)
@@ -247,4 +243,48 @@ func PtrValue(v interface{}) interface{} {
 		return nil
 	}
 	return reflect.Indirect(val).Interface()
+}
+
+type Number interface{
+	~int|~int64|~float32|~float64
+}
+
+func Plus[V Number](v V, v2 ...V) V{
+	var result V
+	result = v
+	for _, i := range v2 {
+		result += i
+	}
+	return result
+}
+
+func Minus[V Number](v V, v2 ...V) V{
+	var result V
+	result = v
+	for _, i := range v2 {
+		result -= i
+	}
+	return result
+}
+
+func Multiply[V Number](v V, v2 ...V) V{
+	var result V
+	result = v
+	for _, i := range v2 {
+		result *= i
+	}
+	return result
+}
+
+func Divide[V Number](v V, v2 ...V) V{
+	var result V
+	result = v
+	for _, i := range v2 {
+		result /= i
+	}
+	return result
+}
+
+func Remainder[V int|int64](v, v2 V) V{
+	return v % v2
 }
