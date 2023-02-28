@@ -1,11 +1,12 @@
 package log
 
 import (
-	"github.com/owenzhou/ginrbac/support/facades"
-	"github.com/owenzhou/ginrbac/utils/php"
-	"io/ioutil"
+	"io"
 	"path"
 	"time"
+
+	"github.com/owenzhou/ginrbac/support/facades"
+	"github.com/owenzhou/ginrbac/utils/php"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
@@ -47,7 +48,7 @@ func newLogger() *logrus.Logger {
 	if facades.Config.Debug {
 		logger.SetLevel(logrus.DebugLevel)
 	} else {
-		logger.SetOutput(ioutil.Discard)
+		logger.SetOutput(io.Discard)
 	}
 
 	var formater logrus.Formatter
