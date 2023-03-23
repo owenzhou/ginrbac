@@ -274,7 +274,7 @@ func Time() int64 {
 }
 
 //时间字符转时间戳
-func Strtotime(str string) int64 {
+func Strtotime(str string, loc ...string) int64 {
 	re := regexp.MustCompile(`([\d-/:]+)`)
 	if !re.MatchString(str) {
 		return 0
@@ -292,7 +292,15 @@ func Strtotime(str string) int64 {
 		}
 		return s
 	})
-	location, _ := time.LoadLocation("Asia/Shanghai")
+	//替换后的format空格太多
+	if strings.Count(format, " ") > 1 {
+		format = "2006-01-02 15:04:05"
+	}
+	l := "Asia/Shanghai"
+	if len(loc) > 0 {
+		l = loc[0]
+	}
+	location, _ := time.LoadLocation(l)
 	t, err := time.ParseInLocation(format, str, location)
 	if err != nil {
 		return 0
