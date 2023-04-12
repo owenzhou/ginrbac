@@ -20,6 +20,8 @@ import (
 	"unicode"
 
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 /*****************加密相关函数 开始******************/
@@ -33,15 +35,15 @@ func Md5(str string) string {
 //md5文件加密
 func Md5_file(filename string, raw ...bool) (string, error) {
 	b, err := os.Open(filename)
-	defer b.Close()
 	if err != nil {
 		return "", err
 	}
+	defer b.Close()
 	m := md5.New()
 	if _, err := io.Copy(m, b); err != nil {
 		return "", err
 	}
-	if len(raw) > 0 && raw[0] == true {
+	if len(raw) > 0 && raw[0] {
 		return fmt.Sprintf("%b", m.Sum(nil)), nil
 	}
 	return fmt.Sprintf("%x", m.Sum(nil)), nil
@@ -184,12 +186,10 @@ func WriteFile(path string, content string) error {
 //追加写入
 func WriteAppendFile(fileName string, content string) error {
 	f, err := os.OpenFile(fileName, os.O_WRONLY, 0644)
-
-	defer f.Close()
-
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	n, _ := f.Seek(0, 2)
 	_, err = f.WriteAt([]byte(content), n)
 	return err
@@ -237,8 +237,7 @@ func File_put_contents(fileName string, content string) error {
 
 //判断文件或目录是否存在
 func File_exists(path string) bool {
-	_, err := os.Stat(path)
-	if err != nil {
+	if _, err := os.Stat(path);err != nil {
 		return false
 	}
 	return true
@@ -359,7 +358,7 @@ func Strtoupper(str string) string {
 
 //字符串每个单词首字母转大写
 func Ucwords(str string) string {
-	return strings.Title(str)
+	return cases.Title(language.Und).String(str)
 }
 
 //字符串首字母转大写
