@@ -1,9 +1,10 @@
-//常用工具类
+// 常用工具类
 package php
 
 import (
 	"crypto/md5"
 	"crypto/sha1"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -195,7 +196,7 @@ func WriteAppendFile(fileName string, content string) error {
 }
 
 //file_get_contents
-func File_get_contents(fileName string) (string, error) {
+func File_get_contents(fileName string, skipVerify ...bool) (string, error) {
 	//使用正则判断是网络还是本地
 	matched, err := regexp.MatchString(`^http.*`, fileName)
 	if err != nil {
@@ -204,7 +205,20 @@ func File_get_contents(fileName string) (string, error) {
 
 	//如果是网络
 	if matched {
-		res, err := http.Get(fileName)
+		var(
+			res *http.Response
+			err error
+		)
+		if len(skipVerify) > 0 && skipVerify[0] {
+			tr := &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+			client := http.Client{Transport: tr}
+			res, err = client.Get(fileName)
+		}else{
+			res, err = http.Get(fileName)
+		}
+
 		if err != nil {
 			return "", err
 		}
