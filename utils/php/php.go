@@ -26,13 +26,13 @@ import (
 
 /*****************加密相关函数 开始******************/
 
-//md5加密
+// md5加密
 func Md5(str string) string {
 	data := md5.Sum([]byte(str))
 	return fmt.Sprintf("%x", data)
 }
 
-//md5文件加密
+// md5文件加密
 func Md5_file(filename string, raw ...bool) (string, error) {
 	b, err := os.Open(filename)
 	if err != nil {
@@ -49,7 +49,7 @@ func Md5_file(filename string, raw ...bool) (string, error) {
 	return fmt.Sprintf("%x", m.Sum(nil)), nil
 }
 
-//sha1加密
+// sha1加密
 func Sha1(str string) string {
 	data := sha1.Sum([]byte(str))
 	return fmt.Sprintf("%x", data)
@@ -69,7 +69,7 @@ func Password_verify(password string, hash string) bool {
 
 /*****************文件相关函数 开始******************/
 
-//判断是否是文件夹
+// 判断是否是文件夹
 func Is_dir(path string) bool {
 	stat, err := os.Stat(path)
 	if err != nil {
@@ -78,7 +78,7 @@ func Is_dir(path string) bool {
 	return stat.IsDir()
 }
 
-//判断是否是文件
+// 判断是否是文件
 func Is_file(path string) bool {
 	stat, err := os.Stat(path)
 	if err != nil {
@@ -87,7 +87,7 @@ func Is_file(path string) bool {
 	return stat.Mode().IsRegular()
 }
 
-//创建文件夹
+// 创建文件夹
 func Mkdir(dir string, mode os.FileMode, recursive ...bool) (bool, error) {
 	var err error
 	if len(recursive) > 0 {
@@ -101,19 +101,19 @@ func Mkdir(dir string, mode os.FileMode, recursive ...bool) (bool, error) {
 	return true, err
 }
 
-//创建文件或打开文件
+// 创建文件或打开文件
 func Fopen(name string) (*os.File, error) {
 	flag := os.O_APPEND | os.O_CREATE
 	f, err := os.OpenFile(name, flag, 0777)
 	return f, err
 }
 
-//写入文件，与fopen一起使用
+// 写入文件，与fopen一起使用
 func Fwrite(f *os.File, content string) (int, error) {
 	return f.Write([]byte(content))
 }
 
-//关闭文件
+// 关闭文件
 func Fclose(f *os.File) (bool, error) {
 	err := f.Close()
 	if err != nil {
@@ -122,7 +122,7 @@ func Fclose(f *os.File) (bool, error) {
 	return true, err
 }
 
-//删除文件
+// 删除文件
 func Unlink(name string) (bool, error) {
 	err := os.RemoveAll(name)
 	if err != nil {
@@ -131,7 +131,7 @@ func Unlink(name string) (bool, error) {
 	return true, err
 }
 
-//文件或文件夹重命名
+// 文件或文件夹重命名
 func Rename(oldname, newname string) (bool, error) {
 	err := os.Rename(oldname, newname)
 	if err != nil {
@@ -140,7 +140,7 @@ func Rename(oldname, newname string) (bool, error) {
 	return true, err
 }
 
-//复制文件或文件夹
+// 复制文件或文件夹
 func Copy(src, dst string) (int64, error) {
 	stat, err := os.Stat(src)
 	if err != nil {
@@ -164,12 +164,12 @@ func Copy(src, dst string) (int64, error) {
 
 }
 
-//删除目录
+// 删除目录
 func Rmdir(path string) error {
 	return os.RemoveAll(path)
 }
 
-//读取文件
+// 读取文件
 func ReadFile(name string) (string, error) {
 	content, err := os.ReadFile(name)
 	if err != nil {
@@ -178,12 +178,12 @@ func ReadFile(name string) (string, error) {
 	return string(content), err
 }
 
-//写文件
+// 写文件
 func WriteFile(path string, content string) error {
 	return os.WriteFile(path, []byte(content), 0644)
 }
 
-//追加写入
+// 追加写入
 func WriteAppendFile(fileName string, content string) error {
 	f, err := os.OpenFile(fileName, os.O_WRONLY, 0644)
 	if err != nil {
@@ -195,7 +195,7 @@ func WriteAppendFile(fileName string, content string) error {
 	return err
 }
 
-//file_get_contents
+// file_get_contents
 func File_get_contents(fileName string, skipVerify ...bool) (string, error) {
 	//使用正则判断是网络还是本地
 	matched, err := regexp.MatchString(`^http.*`, fileName)
@@ -205,7 +205,7 @@ func File_get_contents(fileName string, skipVerify ...bool) (string, error) {
 
 	//如果是网络
 	if matched {
-		var(
+		var (
 			res *http.Response
 			err error
 		)
@@ -215,7 +215,7 @@ func File_get_contents(fileName string, skipVerify ...bool) (string, error) {
 			}
 			client := http.Client{Transport: tr}
 			res, err = client.Get(fileName)
-		}else{
+		} else {
 			res, err = http.Get(fileName)
 		}
 
@@ -230,20 +230,20 @@ func File_get_contents(fileName string, skipVerify ...bool) (string, error) {
 	return ReadFile(fileName)
 }
 
-//file_put_contents
+// file_put_contents
 func File_put_contents(fileName string, content string) error {
 	return WriteFile(fileName, content)
 }
 
-//判断文件或目录是否存在
+// 判断文件或目录是否存在
 func File_exists(path string) bool {
-	if _, err := os.Stat(path);err != nil {
+	if _, err := os.Stat(path); err != nil {
 		return false
 	}
 	return true
 }
 
-//更改权限
+// 更改权限
 func Chmod(path string, mode os.FileMode) error {
 	return os.Chmod(path, mode)
 }
@@ -281,12 +281,12 @@ func Date(format string, durations ...interface{}) string {
 	return t.Format(replacer.Replace(format))
 }
 
-//当前时间戳
+// 当前时间戳
 func Time() int64 {
 	return time.Now().Unix()
 }
 
-//时间字符转时间戳
+// 时间字符转时间戳
 func Strtotime(str string, loc ...string) int64 {
 	re := regexp.MustCompile(`([\d-/:]+)`)
 	if !re.MatchString(str) {
@@ -325,43 +325,46 @@ func Strtotime(str string, loc ...string) int64 {
 
 /*****************字符串相关函数 开始******************/
 
-//ascii 转 字符
+// ascii 转 字符
 func Chr(i int) string {
 	return fmt.Sprintf("%c", i)
 }
 
-//字符转ascii
+// 字符转ascii
 func Ord(str string) int {
 	r := []rune(str)
 	return int(r[0])
 }
 
-//返回分隔后的字符串数组
+// 返回分隔后的字符串数组
 func Split(str string, sep string) []string {
+	if str == "" {
+		return []string{}
+	}
 	return strings.Split(str, sep)
 }
 
-//将字符串数组转为字符串
+// 将字符串数组转为字符串
 func Join(strs []string, sep string) string {
 	return strings.Join(strs, sep)
 }
 
-//字符串转小写
+// 字符串转小写
 func Strtolower(str string) string {
 	return strings.ToLower(str)
 }
 
-//字符串转大写
+// 字符串转大写
 func Strtoupper(str string) string {
 	return strings.ToUpper(str)
 }
 
-//字符串每个单词首字母转大写
+// 字符串每个单词首字母转大写
 func Ucwords(str string) string {
 	return cases.Title(language.Und).String(str)
 }
 
-//字符串首字母转大写
+// 字符串首字母转大写
 func Ucfirst(str string) string {
 	b := []byte(str)
 	for k, v := range b {
@@ -371,7 +374,7 @@ func Ucfirst(str string) string {
 	return string(b)
 }
 
-//截取字符串
+// 截取字符串
 func Substr(str string, start int, length ...int) string {
 	strLen := len(str)
 	//start
@@ -398,7 +401,7 @@ func Substr(str string, start int, length ...int) string {
 	return str[start:]
 }
 
-//截取中文字符串
+// 截取中文字符串
 func Mb_substr(str string, start int, length ...int) string {
 	ru := []rune(str)
 	strLen := len(ru)
@@ -426,32 +429,32 @@ func Mb_substr(str string, start int, length ...int) string {
 	return string(ru[start:])
 }
 
-//查找子字符串在字符串中第一次出现的位置
+// 查找子字符串在字符串中第一次出现的位置
 func Strpos(str string, substr string) int {
 	return strings.Index(str, substr)
 }
 
-//查找子字符串在字符串中最后一次出现的位置
+// 查找子字符串在字符串中最后一次出现的位置
 func Strrpos(str string, substr string) int {
 	return strings.LastIndex(str, substr)
 }
 
-//去掉字符串左右的子字符串
+// 去掉字符串左右的子字符串
 func Trim(str string, sep string) string {
 	return strings.Trim(str, sep)
 }
 
-//去掉字符串中左边的子字符串
+// 去掉字符串中左边的子字符串
 func Ltrim(str string, sep string) string {
 	return strings.TrimLeft(str, sep)
 }
 
-//去掉字符串中右边的子字符串
+// 去掉字符串中右边的子字符串
 func Rtrim(str string, sep string) string {
 	return strings.TrimRight(str, sep)
 }
 
-//返回指定子字符串及以后的字符串
+// 返回指定子字符串及以后的字符串
 func Strstr(str string, sep string) string {
 	pos := strings.Index(str, sep)
 	if pos == -1 {
@@ -460,23 +463,23 @@ func Strstr(str string, sep string) string {
 	return str[pos:]
 }
 
-//返回字符串的长度
+// 返回字符串的长度
 func Strlen(str string) int {
 	return len(str)
 }
 
-//返回中文字符串的长度
+// 返回中文字符串的长度
 func Mb_strlen(str string) int {
 	r := []rune(str)
 	return len(r)
 }
 
-//替换字符串
+// 替换字符串
 func Str_replace(old string, new string, str string) string {
 	return strings.ReplaceAll(str, old, new)
 }
 
-//字符串反转
+// 字符串反转
 func Strrev(str string) string {
 	ru := []rune(str)
 	if len(ru) <= 0 {
@@ -485,7 +488,7 @@ func Strrev(str string) string {
 	return Strrev(string(ru[1:])) + string(ru[0:1])
 }
 
-//返回数组，数组的每个元素的长度为n
+// 返回数组，数组的每个元素的长度为n
 func Str_split(str string, n ...int) []string {
 	var result []string
 	var strs string
@@ -507,7 +510,7 @@ func Str_split(str string, n ...int) []string {
 	return result
 }
 
-//区分大小写的字符串比较
+// 区分大小写的字符串比较
 func Strcasecmp(str, str2 string) bool {
 	result := strings.Compare(str, str2)
 	if result == 0 {
@@ -517,23 +520,23 @@ func Strcasecmp(str, str2 string) bool {
 	}
 }
 
-//不区分大小写的字符串比较
+// 不区分大小写的字符串比较
 func Strcmp(str, str2 string) bool {
 	return strings.EqualFold(str, str2)
 }
 
-//随机数字
+// 随机数字
 func Mt_rand(min, max int64) int64 {
 	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return rd.Int63n(max-min) + min
 }
 
-//base64编码
+// base64编码
 func Base64_encode(str string) string {
 	return base64.StdEncoding.EncodeToString([]byte(str))
 }
 
-//base64解码
+// base64解码
 func Base64_decode(str string) string {
 	data, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
@@ -542,7 +545,7 @@ func Base64_decode(str string) string {
 	return string(data)
 }
 
-//struct转json字符串
+// struct转json字符串
 func Json_encode(in interface{}) (string, error) {
 	bytes, err := json.Marshal(in)
 	if err != nil {
@@ -551,7 +554,7 @@ func Json_encode(in interface{}) (string, error) {
 	return string(bytes), err
 }
 
-//json字符串转struct
+// json字符串转struct
 func Json_decode(str string, out interface{}) error {
 	return json.Unmarshal([]byte(str), out)
 }
@@ -560,12 +563,12 @@ func Json_decode(str string, out interface{}) error {
 
 /*****************数组相关函数 开始******************/
 
-//获取接口的数据类型
+// 获取接口的数据类型
 func Gettype(i interface{}) string {
 	return reflect.TypeOf(i).String()
 }
 
-//获取接口的具体分类
+// 获取接口的具体分类
 func Getkind(i interface{}) string {
 	return reflect.TypeOf(i).Kind().String()
 }
@@ -596,7 +599,7 @@ func In_array(need interface{}, arr interface{}) bool {
 	return false
 }
 
-//数组入栈
+// 数组入栈
 func Array_push(arr interface{}, elem ...interface{}) {
 	kind := Getkind(arr)
 	if kind != "ptr" {
@@ -616,7 +619,7 @@ func Array_push(arr interface{}, elem ...interface{}) {
 	val.Set(result)
 }
 
-//数组出栈
+// 数组出栈
 func Array_pop(arr interface{}) interface{} {
 	kind := Getkind(arr)
 	if kind != "ptr" {
@@ -634,7 +637,7 @@ func Array_pop(arr interface{}) interface{} {
 	return result.Interface()
 }
 
-//将数组开头的单元移出数组
+// 将数组开头的单元移出数组
 func Array_shift(arr interface{}) interface{} {
 	kind := Getkind(arr)
 	if kind != "ptr" {
@@ -652,7 +655,7 @@ func Array_shift(arr interface{}) interface{} {
 	return result.Interface()
 }
 
-//在数组开头插入一个或多个单元
+// 在数组开头插入一个或多个单元
 func Array_unshift(arr interface{}, elem ...interface{}) {
 	kind := Getkind(arr)
 	if kind != "ptr" {
@@ -676,7 +679,7 @@ func Array_unshift(arr interface{}, elem ...interface{}) {
 	val.Set(result)
 }
 
-//删除数组指定元素
+// 删除数组指定元素
 func Unset(arr interface{}, i int) {
 	kind := Getkind(arr)
 	if kind != "ptr" {
@@ -692,7 +695,7 @@ func Unset(arr interface{}, i int) {
 	val.Set(result)
 }
 
-//从数组中取出一段
+// 从数组中取出一段
 func Array_slice(arr interface{}, n ...int) interface{} {
 	kind := Getkind(arr)
 	if kind != "slice" && kind != "array" {
@@ -709,7 +712,7 @@ func Array_slice(arr interface{}, n ...int) interface{} {
 	return ""
 }
 
-//去掉数组中的某一部分并用其它值取代
+// 去掉数组中的某一部分并用其它值取代
 func Array_splice(arr interface{}, offset int, length int, replacement ...interface{}) interface{} {
 	kind := Getkind(arr)
 	if kind != "ptr" {
@@ -739,8 +742,8 @@ func Array_splice(arr interface{}, offset int, length int, replacement ...interf
 	return result
 }
 
-//数组差集
-//只支持 []int, []float32, []float64, []string, []byte
+// 数组差集
+// 只支持 []int, []float32, []float64, []string, []byte
 func Array_diff(arr1 interface{}, arrs ...interface{}) (interface{}, error) {
 	arr1Value := reflect.ValueOf(arr1)
 	if arr1Value.Kind().String() != "slice" && arr1Value.Kind().String() != "array" {
@@ -807,10 +810,10 @@ func Array_diff(arr1 interface{}, arrs ...interface{}) (interface{}, error) {
 
 /*********************其它函数*************************/
 
-//去除html标签
+// 去除html标签
 func Strip_tags(str string) string {
 	reg := regexp.MustCompile(`<[\s\S]+?>`)
-	if reg.MatchString(str){
+	if reg.MatchString(str) {
 		str = reg.ReplaceAllString(str, "")
 	}
 	return str
