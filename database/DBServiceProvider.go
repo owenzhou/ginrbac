@@ -10,7 +10,7 @@ type DBServiceProvider struct {
 }
 
 func (db *DBServiceProvider) Register() {
-	db.App.Singleton("db", func(app contracts.IApplication) interface{} {
+	db.App.Bind("db", func(app contracts.IApplication) interface{} {
 		return newDB()
 	})
 }

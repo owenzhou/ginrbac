@@ -216,7 +216,9 @@ func (app *App) InjectApp(providers interface{}) interface{} {
 			} else {
 				instance = reflect.New(provider.Type()).Elem()
 			}
-
+			if !provider.CanSet(){
+				continue
+			}
 			provider.Set(reflect.ValueOf(app.InjectApp(instance.Interface())))
 		}
 	}
