@@ -8,8 +8,8 @@ import (
 	"github.com/owenzhou/ginrbac/contracts"
 	"github.com/owenzhou/ginrbac/support/facades"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type JWTGuard struct {
@@ -135,7 +135,7 @@ func (j *JWTGuard) hasValidCredentials(user contracts.IUser, credentials map[str
 
 type CustomCliams struct {
 	User *GenericUser
-	*jwt.StandardClaims
+	*jwt.RegisteredClaims
 }
 
 func (j *JWTGuard) createToken(iUser contracts.IUser) (string, error) {
@@ -146,8 +146,8 @@ func (j *JWTGuard) createToken(iUser contracts.IUser) (string, error) {
 	// Create the Claims
 	claims := CustomCliams{
 		user,
-		&jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(facades.Config.JWT.LifeTime) * time.Second).Unix(),
+		&jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(facades.Config.JWT.LifeTime) * time.Second)),
 		},
 	}
 
