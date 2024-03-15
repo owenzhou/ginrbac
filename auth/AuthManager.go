@@ -14,7 +14,7 @@ func newAuthManager(app contracts.IApplication) *AuthManager {
 	return &AuthManager{App: app, guards: make(map[string]contracts.IAuth)}
 }
 
-//设置守卫
+// 设置守卫
 func (a *AuthManager) Guard(guard ...string) contracts.IAuth {
 	var name string
 	conf := facades.Config.Auth
@@ -24,13 +24,13 @@ func (a *AuthManager) Guard(guard ...string) contracts.IAuth {
 		name = guard[0]
 	}
 
-	if _, ok := a.guards[name]; ok {
-		return a.guards[name]
+	if auth, ok := a.guards[name]; ok {
+		return auth
 	}
 	return a.resolve(name)
 }
 
-//守卫的具体实现
+// 守卫的具体实现
 func (a *AuthManager) resolve(name string) contracts.IAuth {
 	var driver contracts.IAuth
 	guards := facades.Config.Auth.Guards
@@ -53,7 +53,7 @@ func (a *AuthManager) resolve(name string) contracts.IAuth {
 	return driver
 }
 
-//创建session守卫
+// 创建session守卫
 func (a *AuthManager) createSessionDriver(name, providerName string) contracts.IAuth {
 
 	userProvider := a.createUserProvider(providerName)
@@ -64,7 +64,7 @@ func (a *AuthManager) createSessionDriver(name, providerName string) contracts.I
 	}
 }
 
-//创建token守卫
+// 创建token守卫
 func (a *AuthManager) createTokenDriver(name, providerName string) contracts.IAuth {
 
 	userProvider := a.createUserProvider(providerName)
@@ -75,7 +75,7 @@ func (a *AuthManager) createTokenDriver(name, providerName string) contracts.IAu
 	}
 }
 
-//创建token守卫
+// 创建token守卫
 func (a *AuthManager) createJWTDriver(name, providerName string) contracts.IAuth {
 
 	userProvider := a.createUserProvider(providerName)
@@ -86,7 +86,7 @@ func (a *AuthManager) createJWTDriver(name, providerName string) contracts.IAuth
 	}
 }
 
-//创建用户提供者
+// 创建用户提供者
 func (a *AuthManager) createUserProvider(providerName string) contracts.IUserProvider {
 	var userProvider contracts.IUserProvider
 	providers := facades.Config.Auth.Providers

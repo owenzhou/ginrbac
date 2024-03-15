@@ -1,15 +1,15 @@
 package facades
 
-import "github.com/sirupsen/logrus"
+import (
+	"go.uber.org/zap"
+)
 
-var Log *logrus.Logger
-
-type Fields = logrus.Fields
+var Log *zap.SugaredLogger
 
 type LogFacade struct {
 	*Facade
 }
 
 func (l *LogFacade) GetFacadeAccessor() {
-	Log = l.App.Make("log").(*logrus.Logger)
+	Log = l.App.Make("log").(*zap.SugaredLogger)
 }

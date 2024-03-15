@@ -60,7 +60,7 @@ func (j *JWTGuard) User() contracts.IUser {
 	}
 	cliams, err := j.parseToken(token)
 	if err != nil {
-		facades.Log.Error("login err: ", err)
+		facades.Log.With("error", err).Error("jwt login error")
 		user = &GenericUser{}
 	} else {
 		user = cliams.User

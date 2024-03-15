@@ -34,7 +34,7 @@ func NewApp(views ...fs.FS) *App {
 	app.Register(new(bootstrapconfig.Providers))
 	app.Register(new(bootstrapconfig.Facades))
 
-	if facades.Config != nil{
+	if facades.Config != nil {
 		//设置运行模式
 		if facades.Config.Debug {
 			gin.SetMode(gin.DebugMode)
@@ -54,7 +54,7 @@ func NewApp(views ...fs.FS) *App {
 
 	app.Engine = engine
 
-	if facades.Config != nil{
+	if facades.Config != nil {
 		//设置默认全局中间件,必需在 app.IRouter 各方法前面
 		app.Middlewares(new(bootstrapconfig.Middlewares))
 	}
@@ -97,7 +97,7 @@ func (a *App) allocateContext() *Context {
 	return &Context{}
 }
 
-//包装进自己的context
+// 包装进自己的context
 func (a *App) bindContext(handler interface{}) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := a.pool.Get().(*Context)
@@ -127,7 +127,7 @@ func (a *App) bindContext(handler interface{}) gin.HandlerFunc {
 	}
 }
 
-//私有方法，判断路由是否有注解，并绑定自定义context
+// 私有方法，判断路由是否有注解，并绑定自定义context
 func (a *App) getComment(args ...interface{}) ([]gin.HandlerFunc, string) {
 	//取接口最后一个元素，判断是否为字符串注解
 	var comment string
@@ -167,24 +167,24 @@ func (app *App) GetEngine() *gin.Engine {
 	return app.Engine
 }
 
-//使用中间件
+// 使用中间件
 func (app *App) Use(middlewares ...interface{}) {
 	handlers, _ := app.getComment(middlewares...)
 	app.Engine.Use(handlers...)
 }
 
-//页面404
+// 页面404
 func (app *App) NoRoute(handlers ...interface{}) {
 	handlers2, _ := app.getComment(handlers...)
 	app.Engine.NoRoute(handlers2...)
 }
 
-//获取应用名称
+// 获取应用名称
 func (app *App) Name() string {
 	return facades.Config.AppName
 }
 
-//调用默认的全局中间件
+// 调用默认的全局中间件
 func (app *App) Middlewares(middlewares interface{}) {
 	v := reflect.Indirect(reflect.ValueOf(app.InjectApp(middlewares)))
 	for i := 0; i < v.NumField(); i++ {
@@ -195,7 +195,7 @@ func (app *App) Middlewares(middlewares interface{}) {
 	}
 }
 
-//往指定的结构体注入app对象
+// 往指定的结构体注入app对象
 func (app *App) InjectApp(providers interface{}) interface{} {
 	v := reflect.Indirect(reflect.ValueOf(providers))
 
@@ -216,7 +216,7 @@ func (app *App) InjectApp(providers interface{}) interface{} {
 			} else {
 				instance = reflect.New(provider.Type()).Elem()
 			}
-			if !provider.CanSet(){
+			if !provider.CanSet() {
 				continue
 			}
 			provider.Set(reflect.ValueOf(app.InjectApp(instance.Interface())))
@@ -244,12 +244,12 @@ func (app *App) Register(providers interface{}) {
 	}
 }
 
-//只实例化一次
+// 只实例化一次
 func (app *App) Singleton(abstract string, closure contracts.ServiceFunc) {
 	app.Bind(abstract, closure, true)
 }
 
-//每次实例化
+// 每次实例化
 func (app *App) Bind(abstract string, closure contracts.ServiceFunc, share ...bool) {
 
 	if app.bindings != nil {
@@ -264,7 +264,7 @@ func (app *App) Bind(abstract string, closure contracts.ServiceFunc, share ...bo
 	}
 }
 
-//创建实例
+// 创建实例
 func (app *App) Make(abstract string) interface{} {
 	if _, ok := app.instances[abstract]; ok {
 		return app.instances[abstract]
@@ -279,7 +279,7 @@ func (app *App) Make(abstract string) interface{} {
 	return instance
 }
 
-//注册事件
+// 注册事件
 func (app *App) RegistEvent(listens interface{}) {
 	//反射创建listens
 	v := reflect.ValueOf(listens).Elem()
@@ -309,7 +309,7 @@ func (app *App) RegistEvent(listens interface{}) {
 	}
 }
 
-//将打包的模板文件整理并且可以嵌套使用
+// 将打包的模板文件整理并且可以嵌套使用
 func (app *App) SetHTMLTemplate(views fs.FS) {
 	render := app.loadTemplate(views)
 	app.Engine.HTMLRender = render
@@ -320,7 +320,7 @@ func (app *App) SetHTMLTemplate(views fs.FS) {
 		return
 	}
 	fs, _ := fs.Sub(views, "views/layouts/assets")
-	app.Engine.Use(func(c *gin.Context){
+	app.Engine.Use(func(c *gin.Context) {
 		if strings.HasPrefix(c.Request.RequestURI, "/assets/") {
 			c.Header("Cache-Control", "max-age=5184000")
 		}
@@ -329,7 +329,7 @@ func (app *App) SetHTMLTemplate(views fs.FS) {
 	app.Engine.StaticFS("/assets", http.FS(fs))
 }
 
-//设置模板函数
+// 设置模板函数
 func (app *App) SetFuncMap(funcMap template.FuncMap) {
 	app.FuncMap = utils.FuncMap
 	for key, value := range funcMap {
@@ -341,7 +341,7 @@ func (app *App) SetFuncMap(funcMap template.FuncMap) {
 	app.FuncMap["widget"] = utils.Widget
 }
 
-//加载模板
+// 加载模板
 func (app *App) loadTemplate(views fs.FS) render.Renderer {
 	r := render.New()
 	//获取模板配置
@@ -354,7 +354,7 @@ func (app *App) loadTemplate(views fs.FS) render.Renderer {
 		}
 		layout, err := fs.Glob(views, moduleLayout)
 		if err != nil {
-			facades.Log.WithField("error:", err).Error(module["modulename"] + " Layout Error")
+			facades.Log.With("error", err).Error(module["modulename"] + " Layout Error")
 		}
 		if len(layout) > 0 {
 			contentViewPath, ok := module["viewpath"]
@@ -366,7 +366,7 @@ func (app *App) loadTemplate(views fs.FS) render.Renderer {
 			for _, split := range contentSplit {
 				contentGlob, err := fs.Glob(views, split)
 				if err != nil {
-					facades.Log.WithField("error:", err).Error(module["modulename"] + " Content Error")
+					facades.Log.With("error", err).Error(module["modulename"] + " Content Error")
 				}
 				contents = append(contents, contentGlob...)
 			}
@@ -384,18 +384,18 @@ func (app *App) loadTemplate(views fs.FS) render.Renderer {
 	return r
 }
 
-//获取路由树
+// 获取路由树
 func (app *App) GetRoutesTree() interface{} {
 	return routes
 }
 
-//获取路由数组，数组每个元素都是一个路由组
+// 获取路由数组，数组每个元素都是一个路由组
 func (app *App) GetRoutesGroup() (result interface{}) {
 	result = generateGroup(routes)
 	return
 }
 
-//递归生成路由组
+// 递归生成路由组
 func generateGroup(node *route) (result []*route) {
 	//退出递归
 	if len(node.Children) == 0 {
@@ -406,7 +406,7 @@ func generateGroup(node *route) (result []*route) {
 	routeCopy.Children = []*route{}
 	result = append(result, &routeCopy)
 	for _, v := range node.Children {
-		if v.Method != "GROUP"{
+		if v.Method != "GROUP" {
 			routeCopy.Children = append(routeCopy.Children, v)
 			continue
 		}
@@ -416,8 +416,7 @@ func generateGroup(node *route) (result []*route) {
 	return
 }
 
-
-//开始程序
+// 开始程序
 func (app *App) Run(addr ...string) {
 	app.Engine.Run(addr...)
 }

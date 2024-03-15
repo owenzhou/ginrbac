@@ -1,13 +1,12 @@
 package yaml
 
-import "time"
-
 type Logger struct {
-	Level        string        `mapstructure:"level" json:"level" yaml:"level"`
-	Debug        bool          `mapstructure:"debug" json:"debug" yaml:"debug"`
-	LinkName     string        `mapstructure:"link-name" json:"link-name" yaml:"link-name"`
-	Encoding     string        `mapstructure:"encoding" json:"encoding" yaml:"encoding"`
-	OutputDir    string        `mapstructure:"output-dir" json:"output-dir" yaml:"output-dir"`
-	MaxAge       time.Duration `mapstructure:"max-age" json:"max-age" yaml:"max-age"`
-	RotationTime time.Duration `mapstructure:"rotation-time" json:"rotation-time" yaml:"rotation-time"`
+	Level      string `mapstructure:"level" json:"level" yaml:"level"`
+	Encoding   string `mapstructure:"encoding" json:"encoding" yaml:"encoding"`
+	OutputDir  string `mapstructure:"output-dir" json:"output-dir" yaml:"output-dir"`
+	MaxAge     int    `mapstructure:"maxage" json:"maxage" yaml:"maxage"`
+	MaxSize    int    `mapstructure:"maxsize" json:"maxsize" yaml:"maxsize"`
+	MaxBackups int    `mapstructure:"maxbackups" json:"maxbackups" yaml:"maxbackups"`
+	Compress   bool   `mapstructure:"compress" json:"compress" yaml:"compress"`
+	Filename   string `mapstructure:"filename" json:"filename" yaml:"filename"`
 }
