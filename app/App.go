@@ -3,6 +3,7 @@ package app
 import (
 	"html/template"
 	"io/fs"
+	"log"
 	"net/http"
 	"reflect"
 	"strings"
@@ -349,16 +350,19 @@ func (app *App) loadTemplate(views fs.FS) render.Renderer {
 	//循环注册各模块模板
 	for _, module := range conf {
 		moduleLayout, ok := module["layout"]
-		if !ok {
+		if !ok || moduleLayout == "" {
+			log.Printf("Template Error: %s %s\n", module["modulename"], "'layout' tag not find or empty.")
 			continue
 		}
 		layout, err := fs.Glob(views, moduleLayout)
 		if err != nil {
-			facades.Log.With("error", err).Error(module["modulename"] + " Layout Error")
+			log.Printf("Template Error: %s %s\n", module["modulename"], err)
+			continue
 		}
 		if len(layout) > 0 {
 			contentViewPath, ok := module["viewpath"]
-			if !ok {
+			if !ok || contentViewPath == "" {
+				log.Printf("Template Error: %s %s\n", module["modulename"], "'viewpath' tag not find or empty.")
 				continue
 			}
 			var contents []string
@@ -366,7 +370,8 @@ func (app *App) loadTemplate(views fs.FS) render.Renderer {
 			for _, split := range contentSplit {
 				contentGlob, err := fs.Glob(views, split)
 				if err != nil {
-					facades.Log.With("error", err).Error(module["modulename"] + " Content Error")
+					log.Printf("Template Error: %s %s %s\n", module["modulename"], "'viewpath' tag", err)
+					continue
 				}
 				contents = append(contents, contentGlob...)
 			}

@@ -338,9 +338,6 @@ func Ord(str string) int {
 
 // 返回分隔后的字符串数组
 func Split(str string, sep string) []string {
-	if str == "" {
-		return []string{}
-	}
 	return strings.Split(str, sep)
 }
 
