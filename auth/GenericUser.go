@@ -51,7 +51,11 @@ func (g *GenericUser) SetRememberToken(v interface{}) {
 }
 
 func (g *GenericUser) GetRememberToken() string {
-	return g.Attributes[g.GetRememberTokenName()].(string)
+	rt := g.Attributes[g.GetRememberTokenName()]
+	if rt == nil {
+		return ""
+	}
+	return rt.(string)
 }
 
 func (g *GenericUser) GetRememberTokenName() string {
@@ -63,7 +67,11 @@ func (g *GenericUser) SetApiToken(v interface{}) {
 }
 
 func (g *GenericUser) GetApiToken() string {
-	return g.Attributes[g.GetApiTokenName()].(string)
+	at := g.Attributes[g.GetApiTokenName()]
+	if at == nil {
+		return ""
+	}
+	return at.(string)
 }
 
 func (g *GenericUser) GetApiTokenName() string {

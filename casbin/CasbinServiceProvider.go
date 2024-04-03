@@ -10,7 +10,7 @@ type CasbinServiceProvider struct {
 }
 
 func (c *CasbinServiceProvider) Register() {
-	c.App.Singleton("casbin", func(app contracts.IApplication) interface{} {
+	c.App.Bind("casbin", func(app contracts.IApplication) interface{} {
 		return newCasbin()
 	})
 }
